@@ -128,7 +128,13 @@
             <div class="closing-content">
                 <blockquote class="closing-quote">"You are my Tiklu, maru kuchchu puchchu 💋, maru bachchu 😘, my wife ❤️, my today, my tomorrow, my always."</blockquote>
                 <div class="signature">Forever yours, Nikhlu</div>
-                <button class="surprise-button" id="surpriseBtn" aria-label="Reveal a special message">Click here, Betu</button>
+                <div class="buttons-container">
+                    <button class="surprise-button" id="surpriseBtn" aria-label="Reveal a special message">Click here, Betu</button>
+                    <button class="countdown-button" id="countdownBtn" aria-label="See countdown to our meeting">
+                        <span class="button-heart">💕</span>
+                        <span class="button-text">Countdown to Our Meeting</span>
+                    </button>
+                </div>
             </div>
         </section>
     </main>
@@ -144,6 +150,39 @@
             <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
             <h2 id="modalTitle" class="modal-title">A Special Message</h2>
             <p class="modal-text">"When I finally see you, I'll hold you for all the moments we missed, and start counting forever from that first hug. (I am missing you so much, tiku, and I can't wait to see you.)"</p>
+        </div>
+    </div>
+
+    <!-- Countdown Modal -->
+    <div class="countdown-modal-overlay" id="countdownModalOverlay" role="dialog" aria-labelledby="countdownModalTitle" aria-hidden="true">
+        <div class="countdown-modal-content">
+            <button class="countdown-modal-close" id="countdownModalClose" aria-label="Close countdown">&times;</button>
+            <div class="countdown-header">
+                <h2 id="countdownModalTitle" class="countdown-modal-title">We will meet on</h2>
+                <p class="countdown-date">1 April 2026</p>
+            </div>
+            <div class="countdown-display">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">000</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+            <p class="countdown-message">Every second brings us closer together ❤️</p>
         </div>
     </div>
 

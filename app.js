@@ -25,6 +25,7 @@
         initModal();
         initPetals();
         initAccessibility();
+        initCountdown();
     });
     
     // Intersection Observer for scroll animations
@@ -614,6 +615,164 @@
             }
         }
     });
+    
+    // Countdown functionality
+    function initCountdown() {
+        const countdownBtn = document.getElementById('countdownBtn');
+        const countdownModalOverlay = document.getElementById('countdownModalOverlay');
+        const countdownModalClose = document.getElementById('countdownModalClose');
+        const countdownModalContent = countdownModalOverlay.querySelector('.countdown-modal-content');
+        
+        // Target date: April 1, 2026, 00:00:00 (midnight)
+        const targetDate = new Date('2026-04-01T00:00:00').getTime();
+        
+        // Countdown elements
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        
+        let countdownInterval = null;
+        
+        if (!countdownBtn || !countdownModalOverlay || !countdownModalClose) return;
+        
+        // Open countdown modal
+        countdownBtn.addEventListener('click', openCountdownModal);
+        
+        // Close countdown modal
+        countdownModalClose.addEventListener('click', closeCountdownModal);
+        countdownModalOverlay.addEventListener('click', function(e) {
+            if (e.target === countdownModalOverlay) {
+                closeCountdownModal();
+            }
+        });
+        
+        // ESC key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && countdownModalOverlay.classList.contains('active')) {
+                closeCountdownModal();
+            }
+        });
+        
+        function openCountdownModal() {
+            countdownModalOverlay.classList.add('active');
+            countdownModalOverlay.setAttribute('aria-hidden', 'false');
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+            
+            // Start countdown
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+            
+            // Focus trap
+            trapFocusCountdown(countdownModalContent);
+            
+            // Announce to screen readers
+            announceToScreenReader('Countdown to meeting opened');
+        }
+        
+        function closeCountdownModal() {
+            countdownModalOverlay.classList.remove('active');
+            countdownModalOverlay.setAttribute('aria-hidden', 'true');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+            
+            // Stop countdown interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
+            // Return focus to button
+            countdownBtn.focus();
+            
+            // Announce to screen readers
+            announceToScreenReader('Countdown closed');
+        }
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            if (distance < 0) {
+                // Date has passed
+                daysEl.textContent = '000';
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update display with animation
+            updateCountdownElement(daysEl, days, 3);
+            updateCountdownElement(hoursEl, hours, 2);
+            updateCountdownElement(minutesEl, minutes, 2);
+            updateCountdownElement(secondsEl, seconds, 2);
+        }
+        
+        function updateCountdownElement(element, value, digits) {
+            const formattedValue = String(value).padStart(digits, '0');
+            const currentValue = element.textContent.trim();
+            
+            if (currentValue !== formattedValue) {
+                // Add pulse animation
+                element.classList.add('updating');
+                
+                // Update value
+                element.textContent = formattedValue;
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    element.classList.remove('updating');
+                }, 500);
+            }
+        }
+        
+        // Focus trap for countdown modal
+        function trapFocusCountdown(element) {
+            const focusableElements = element.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            const handleKeyDown = function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstElement) {
+                            lastElement.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastElement) {
+                            firstElement.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            };
+            
+            element.addEventListener('keydown', handleKeyDown);
+            
+            // Focus first element
+            if (firstElement) {
+                firstElement.focus();
+            }
+        }
+    }
     
 })();
 
